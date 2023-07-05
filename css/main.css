@@ -76,7 +76,7 @@ main {
 .image-card img {
   width: 100%;
   max-width: 300px;
-  height: auto;
+  height: 300px;
   margin-bottom: 15px;
 }
 
