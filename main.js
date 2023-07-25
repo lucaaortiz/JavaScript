@@ -1,12 +1,18 @@
-// Función para guardar un objeto en el almacenamiento local
 function guardarEnStorage(clave, objeto) {
-  const objetoJSON = JSON.stringify(objeto);
+  let array = obtenerDelStorage(clave);
+  
+  if (!Array.isArray(array)) {
+    array = [];
+  }
+  
+  array.push(objeto);
+  const objetoJSON = JSON.stringify(array);
   localStorage.setItem(clave, objetoJSON);
 }
 
-// Función para obtener un objeto del almacenamiento local
 function obtenerDelStorage(clave) {
   const objetoJSON = localStorage.getItem(clave);
+  
   if (objetoJSON) {
     return JSON.parse(objetoJSON);
   } else {
@@ -22,29 +28,29 @@ formulario.addEventListener("submit", function (event) {
   const nombre = document.getElementById("nombre").value;
   const email = document.getElementById("email").value;
   const telefono = document.getElementById("telefono").value;
+  const fecha = document.getElementById("fecha").value;
+  const turno = document.getElementById("turno").value;
   const comentario = document.getElementById("comentario").value;
 
   const cliente = {
     nombre: nombre,
     email: email,
     telefono: telefono,
+    fecha: fecha,
+    turno: turno,
     comentario: comentario
   };
 
-  // Guardar el objeto cliente en el almacenamiento local
-  guardarEnStorage("cliente", cliente);
+  guardarEnStorage("clientes", cliente);
 
   alert("¡Formulario enviado con éxito!");
-
-  // No restablecer el formulario para mantener los datos ingresados
 });
 
-// Obtener el objeto cliente del almacenamiento local
-const clienteGuardado = obtenerDelStorage("cliente");
-if (clienteGuardado) {
-  // Restaurar los valores en el formulario
-  document.getElementById("nombre").value = clienteGuardado.nombre;
-  document.getElementById("email").value = clienteGuardado.email;
-  document.getElementById("telefono").value = clienteGuardado.telefono;
-  document.getElementById("comentario").value = clienteGuardado.comentario;
+const clientesGuardados = obtenerDelStorage("clientes");
+if (clientesGuardados) {
+  clientesGuardados.forEach(cliente => {
+    console.log(cliente.nombre, cliente.email, cliente.telefono, cliente.fecha, cliente.turno, cliente.comentario);
+  });
 }
+
+
