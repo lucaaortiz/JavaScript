@@ -2,20 +2,15 @@
 let carrito = [];
 const carritoDOM = document.querySelector("#carrito");
 const productosDOM = document.querySelector("#contenedor-productos");
-const finalizarCompraBtn = document.querySelector("#btn-finalizar-compra"); // Obtener el botón por su ID
+const finalizarCompraBtn = document.querySelector("#btn-finalizar-compra"); 
 
 // Función para comenzar
 function init() {
-  
   productosDOM.addEventListener("click", addToCart);
-
-  
   carritoDOM.addEventListener("click", removeFromCart);
-
-  
   finalizarCompraBtn.addEventListener("click", finalizarCompra);
 
-  // Local storage
+  // storage local
   loadCartFromLocalStorage();
 
   renderCart();
@@ -43,6 +38,7 @@ function addToCart(event) {
 
     updateLocalStorage();
     renderCart();
+    updateCarritoIcon(); 
   }
 }
 
@@ -53,6 +49,7 @@ function removeFromCart(event) {
     carrito = carrito.filter((item) => item.title !== title);
     updateLocalStorage();
     renderCart();
+    updateCarritoIcon(); 
   }
 }
 
@@ -99,10 +96,28 @@ function loadCartFromLocalStorage() {
 
 // Función para finalizar la compra
 function finalizarCompra() {
-  alert("¡Gracias por tu compra! El total de la compra es: $" + getTotalCompra());
-  carrito = [];
-  updateLocalStorage();
-  renderCart();
+  const totalCompra = getTotalCompra();
+
+  if (totalCompra > 0) {
+    Swal.fire({
+      title: "¡Gracias por tu compra!",
+      text: `El total de la compra es: $${totalCompra}`,
+      icon: "success",
+      confirmButtonText: "Aceptar",
+    }).then(() => {
+      carrito = [];
+      updateLocalStorage();
+      renderCart();
+      updateCarritoIcon(); 
+    });
+  } else {
+    Swal.fire({
+      title: "¡Carrito vacío!",
+      text: "Agrega productos al carrito antes de finalizar la compra.",
+      icon: "warning",
+      confirmButtonText: "Aceptar",
+    });
+  }
 }
 
 // Función para obtener el total de la compra
@@ -110,5 +125,12 @@ function getTotalCompra() {
   return carrito.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
 }
 
-// Inicializar la aplicación
+
+function updateCarritoIcon() {
+  const carritoCantidad = carrito.reduce((acc, item) => acc + item.quantity, 0);
+  const carritoCantidadDOM = document.getElementById("carrito-cantidad");
+  carritoCantidadDOM.textContent = carritoCantidad;
+}
+
+
 init();
